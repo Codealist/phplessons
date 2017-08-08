@@ -16,3 +16,5 @@ while ($line = fgets($storage)){
     $data = unserialize($line);
     array_push($comments, \form\escapeTags($data));
 }
+
+\storage\closeConnection($storage);

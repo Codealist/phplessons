@@ -62,5 +62,11 @@ function insertRow($storage, $data, $closeAfter = false)
         $data = serialize($data).PHP_EOL;
     }
 
-    return (bool) fputs($storage, $data);
+    $success = (bool) fputs($storage, $data);
+
+    if ($closeAfter){
+        closeConnection($storage);
+    }
+
+    return $success;
 }
