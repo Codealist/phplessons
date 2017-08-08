@@ -10,9 +10,15 @@ namespace storage;
  */
 function connectForRead($path)
 {
-    $path = realpath($path);
+    static $attempts;
+
     if (!file_exists($path) || !is_readable($path)){
-        die("Unable to open storage file for reading\n");
+        if ($attempts > 2){
+            die("Unable to open storage file for reading\n");
+        }
+
+        touch($path);
+        $attempts++;
     }
 
     if (false === $f = fopen($path, 'r')){
