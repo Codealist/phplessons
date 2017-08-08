@@ -59,7 +59,7 @@ function closeConnection($f)
 function insertRow($storage, $data, $closeAfter = false)
 {
     if (is_array($data) || is_object($data)){
-        $data = serialize($data);
+        $data = serialize($data).PHP_EOL;
     }
 
     return (bool) fputs($storage, $data);

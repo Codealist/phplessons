@@ -42,7 +42,12 @@
         <p><a class="btn btn-lg btn-success" href="#" role="button">Sign up today</a></p>
     </div>
 
+    <?php include_once __DIR__."/../app/bootstrap.php"; ?>
+    <?php include_once __DIR__."/../app/controller.php"; ?>
+
     <div class="row marketing">
+
+        <?php for($i = 1; $i <= count($comments); $i++){ ?>
         <div class="col-lg-6">
             <h4>Subheading</h4>
             <p>Donec id elit non mi porta gravida at eget metus. Maecenas faucibus mollis interdum.</p>
@@ -67,15 +72,16 @@
     </div>
 
     <div class="col-lg-12">
+        <?php print_r($_POST);  ?>
         <div>
             <p class="lead">Leave feedback</p>
         </div>
-        <form>
+        <form method="post">
             <div class="form-group">
-                <input type="email" class="form-control" id="name" placeholder="Your name">
+                <input class="form-control" name="name" placeholder="Your name">
             </div>
             <div class="form-group">
-                <textarea class="form-control" id="comment" rows="3"></textarea>
+                <textarea class="form-control" name="comment" rows="3"></textarea>
             </div>
 
             <button class="btn btn-default">Send!</button>
