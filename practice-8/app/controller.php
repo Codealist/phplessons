@@ -14,7 +14,8 @@ $comments = [];
 
 while ($line = fgets($storage)){
     $data = unserialize($line);
-    array_push($comments, \form\escapeTags($data));
+    $data['comment'] = \form\escapeTags($data['comment']);
+    array_push($comments, $data);
 }
 
 \storage\closeConnection($storage);

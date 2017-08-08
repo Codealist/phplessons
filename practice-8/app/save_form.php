@@ -8,7 +8,7 @@ if (isset($_POST['name']) && isset($_POST['comment'])){
 
     $storage = \storage\connectForWrite(STORAGE_FILE);
     $comment = $_POST;
-    $comment['comment'] = \form\escapeTags(
+    $comment['comment'] = \form\censor(
         $comment['comment'], $restrictedWords);
     \storage\insertRow($storage, $comment, true);
 }
