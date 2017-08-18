@@ -1,0 +1,4 @@
+AuthUserFile /etc/.htpasswd
+AuthType Basic
+AuthName “public underauth area”
+Require valid-user
