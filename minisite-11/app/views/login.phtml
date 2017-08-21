@@ -1,0 +1,17 @@
+<div class="jumbotron">
+    <h1>Login page</h1>
+    <div>
+        <form method="post" action="index.php?r=login">
+            <div><?= $errorMessage ?></div>
+            <div>
+                <input type="text" name="username" placeholder="Username"/>
+            </div>
+            <div>
+                <input type="password" name="password" placeholder="Password"/>
+            </div>
+            <div>
+                <input type="submit" value="Login"/>
+            </div>
+        </form>
+    </div>
+</div>

@@ -5,6 +5,8 @@ define("CONTENT_TYPE", "Content-type");
 define("JSON", "application/json");
 define("HTML", "text/html");
 
+define("REDIRECT", "Location");
+
 
 /**
  * @Public
@@ -67,7 +69,7 @@ function cleanBody(array &$arrBody)
  * @param array $headers
  * @return array
  */
-function &makeResponse($content, $code = 200, array $headers = [])
+function makeResponse($content, $code = 200, array $headers = [])
 {
     $response = [];
 

@@ -6,3 +6,4 @@ define("APP_DIR", $rootdir."app/");
 define("LIB_DIR", $rootdir."lib/");
 define("WEB_DIR", $rootdir."web/");
 define("STORAGE_DIR", APP_DIR."storage/");
+define("VIEW_DIR", APP_DIR."views/");
