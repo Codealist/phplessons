@@ -17,7 +17,7 @@ require_once LIB_DIR."storage.php";
  * @param $params
  * @return array
  */
-function indexAction(&$response, $params)
+function indexAction($response, $params)
 {
     \kernel\checkLogin("userid");
     $content = \renderTemplate(VIEW_DIR."index.phtml");
@@ -36,9 +36,26 @@ function indexAction(&$response, $params)
  * @param $params
  * @return array
  */
-function articlesAction(&$response, $params)
+function articlesAction($response, $params)
 {
-    \kernel\checkLogin("userid");
+    global $request;
+
+    $restrictedWords = [
+        "Idiot", "Asshole", "Дурень",
+        "Дебилоид"
+    ];
+
+    if (isset($request['body']['name']) && isset($request['body']['comment'])){
+        require_once LIB_DIR."storage.php";
+        require_once LIB_DIR."formutils.php";
+
+        $storage = \storage\connectForWrite(STORAGE_DIR."comments.stg");
+        $comment = $request['body'];
+        $comment['comment'] = \form\censor(
+            $comment['comment'], $restrictedWords);
+        \storage\insertRow($storage, $comment, true);
+    }
+
     $storage = \storage\connectForRead(STORAGE_DIR."comments.stg");
 
     $comments = [];
@@ -51,7 +68,12 @@ function articlesAction(&$response, $params)
 
     \storage\closeConnection($storage);
 
-    $content = \renderTemplate(VIEW_DIR."comments.phtml");
+    $context = ['comments' => $comments];
+    $context['user'] = isset($_SESSION['username'])
+        ? $_SESSION['username']
+        : null;
+
+    $content = \renderTemplate(VIEW_DIR."comments.phtml", $context);
     if ($content) {
         $response['code'] = 200;
     }
@@ -67,23 +89,30 @@ function articlesAction(&$response, $params)
  * @param $params
  * @return array
  */
-function loginAction(&$response, $params)
+function loginAction($response, $params)
 {
     global $request;
 
-    $username = $request['body']["username"];
-    $password = md5($request['body']["password"]);
+    $username = isset($request['body']["username"])
+        ? $request['body']["username"]
+        : null;
+    $password = isset($request['body']["password"])
+        ? md5($request['body']["password"])
+        : null;
 
-    $stg = \storage\connectForRead(STORAGE_DIR."users.stg");
+    if ($username && $password) {
+        $stg = \storage\connectForRead(STORAGE_DIR."users.stg");
 
-    while ($line = fgets($stg)){
-        $user = unserialize($line);
-        if ($user['username'] == $username && $user["password"] == $password){
-            $request['session']["userid"] = $user["id"];
+        while ($line = fgets($stg)){
+            $user = unserialize($line);
+            if ($user['username'] == $username && $user["password"] == $password){
+                $request['session']["userid"] = $user["id"];
+                $request['session']["username"] = $user["username"];
+            }
         }
+        \storage\closeConnection($stg);
     }
 
-    \storage\closeConnection($stg);
     $errorMessage = '';
     if (isset($_SESSION["userid"])) {
         $response['headers'][REDIRECT] = "/index.php?r=index";
@@ -105,7 +134,10 @@ function loginAction(&$response, $params)
  * @param $response
  * @param $params
  */
-function logoutAction(&$response, $params)
+function logoutAction($response, $params)
 {
     \kernel\checkLogin("userid");
+    session_destroy();
+    $redirect = sprintf("%s: %s", REDIRECT, "index.php?r=login");
+    header($redirect);
 }
