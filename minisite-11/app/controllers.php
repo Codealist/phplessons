@@ -4,6 +4,8 @@
  */
 namespace controllers;
 
+use function kernel\checkLogin;
+
 include_once "bootstrap.php";
 require_once LIB_DIR."storage.php";
 require_once LIB_DIR."render.php";
@@ -140,4 +142,58 @@ function logoutAction($response, $params)
     session_destroy();
     $redirect = sprintf("%s: %s", REDIRECT, "index.php?r=login");
     header($redirect);
+}
+
+function productsAction($response, $params)
+{
+    $categories = [];
+    $dbc = mysqli_connect(DB_HOST, DB_USER,
+        DB_PASS, DB_SCHEMA);
+    mysqli_set_charset($dbc, "utf8");
+    $sql = "
+        SELECT * FROM categories;
+    ";
+
+    $resultStatement = mysqli_query($dbc, $sql);
+    while($row = mysqli_fetch_assoc($resultStatement)){
+        $categories[] = $row;
+    }
+
+    $context = ['categories' => $categories];
+
+    if (isset($params['cat'])){
+        $products = [];
+        $catId = (int) $params['cat'];
+        $sql = "
+        SELECT * FROM products WHERE cat_id = {$catId};
+    ";
+
+        $resultStatement = mysqli_query($dbc, $sql);
+        while($row = mysqli_fetch_assoc($resultStatement)){
+            $products[] = $row;
+        }
+
+        $context['products'] = $products;
+    }
+
+
+    $content = \renderTemplate(VIEW_DIR."products.phtml",
+        $context);
+    $response['body'] = \getFullHtml($content,
+        VIEW_DIR."layout.phtml", ['title' => "Products"]);
+    return $response;
+}
+
+function adminAction($response, $params)
+{
+    \kernel\checkLogin("userid");
+}
+
+function showProductAction($response, $params)
+{
+    if (!isset($params['id'])){
+        die("404");
+    }
+
+
 }

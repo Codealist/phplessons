@@ -1,0 +1,26 @@
+<div>
+    <ul>
+        <?php foreach($categories as $category){ ?>
+            <li>
+                <a href="index.php?r=products&cat=<?=$category['cat_id']?>">
+                    <?=$category['cat_title']?>
+                </a>
+            </li>
+        <?php } ?>
+    </ul>
+</div>
+<?php if (isset($products)){ ?>
+    <div class="row marketing">
+        <div class="col-lg-10">
+            <?php foreach($products as $product){ ?>
+                <h4>
+                    <a href="index.php?r=showProduct&id=<?= $product['prd_id'] ?>">
+                        <?= $product['prd_title'];?>
+                    </a>
+                </h4>
+                <p><b><?= $product['prd_price'];?></b></p>
+                <p><?= $product['prd_desc_full'];?></p>
+            <?php } ?>
+        </div>
+    </div>
+<?php } ?>
